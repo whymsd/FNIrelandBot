@@ -1,0 +1,12 @@
+{
+	"name": "fortnite-ireland-bot",
+	"version": "1.0.0",
+	"description": "Application to help with the Fortnite Ireland Discord Server!",
+	"main": "bot.js",
+	"author": "David Whyms",
+	"dependencies": {
+		"discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+		"fortnite": "^4.1.1",
+		"winston": "^3.1.0"
+	}
+}
