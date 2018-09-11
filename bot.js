@@ -38,7 +38,7 @@ client.on("message", (message) => {
                 message.channel.send("Our next round of custom games are on Sunday 16th September at 8PM.");
             break;
             case "help":
-                message.channel.send("```-customs \t\t\t\t\t\tInformation on the Fortnite Ireland Community games.\n-solos <Username> <Platform>\t Get the solos stats for a user.\n-duos <Username> <Platform>\t  Get the duos stats for a user.\n-squads <Username> <Platform>\tGet the squads stats for a user.```");
+                message.channel.send("```-customs \t\t\t\t\t\tInformation on the Fortnite Ireland Community games.\n-solos <Username> <Platform>\t Get the solos stats for a user.\n-duos <Username> <Platform>\t  Get the duos stats for a user.\n-squads <Username> <Platform>\tGet the squads stats for a user.\n-platform <Platform> \t\t\tChange your server role to the selected platform (PC/PS4/Xbox).```");
             break;
             case "solos":
             case "duos":
