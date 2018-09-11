@@ -72,20 +72,40 @@ client.on("message", (message) => {
                     statDelivery(epicID, platLC, cmd, message.channel);  
                 }
             break;
+            case "platform":
+                if(args.length != 2){
+                    message.channel.send("Please enter a valid platform (PC, PS4, Xbox)");
+                }
+                else{
+                    var plat = args[1].toLowerCase();
+                    var role;
+                    switch(plat){
+                        case "pc":
+                            role = message.guild.roles.find(ay => ay.name  === "PC");
+                        break;
+                        case "ps4":
+                            role = message.guild.roles.find(ay => ay.name  === "PS4");
+                        break;
+                        case "xbox":
+                            role = message.guild.roles.find(ay => ay.name  === "Xbox 1");
+                        break;
+                    }
+                    var myUser = message.guild.members.get(userID);
+                    roleReset(myUser, message.guild.roles.find(ay => ay.name  === "PC"));
+                    roleReset(myUser, message.guild.roles.find(ay => ay.name  === "PS4"));
+                    roleReset(myUser, message.guild.roles.find(ay => ay.name  === "Xbox 1"));
+                    myUser.addRole(role).catch(console.error);
+                    message.channel.send("Server role was changed to " + role.name + "!");
+                }
+            break;
             case "test":
-                client.getUser({
-                    userID: userID
-                });
-                console.log(myRole);
+                //console.log(message.channel.guild.members.find(ay => ay.username === "Whymsy"));
                 //console.log(evt);
                 //client.getUser({"userID": userID}).
                 //console.log(client.guilds); //still not returning the objects I want z z z
             break;
             default:
-                client.sendMessage({
-                    to: channelID,
-                    message: "Sorry, your command was not recognized. Type '!help' to get a list of commands."
-                });
+                message.channel.send("Sorry, your command was not recognized. Type '-help' to get a list of commands.");
             break;
          }
      }
@@ -119,4 +139,8 @@ function statDelivery(user, platform, mode, channel){
         channel.send("```Error retrieving stats, please try again later.```");
         console.log(error);
     });
+}
+
+function roleReset(member, thisRole){
+    member.removeRole(thisRole).catch(console.error);
 }
