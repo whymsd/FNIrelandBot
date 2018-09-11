@@ -12,7 +12,7 @@ logger.add(new logger.transports.Console, {
 logger.level = "debug";
 
 var client = new Discord.Client({
-   token: conf.tokentest,
+   token: conf.token,
    autorun: true
 });
 client.on("ready", function (evt) {
@@ -63,20 +63,28 @@ client.on("message", function (user, userID, channelID, message, evt) {
                 }*/
                 else{
                     var plat = args[args.length - 1];
+                    var platLC = plat.toLowerCase();
                     var epicID = args.slice(1, args.length-1).join(" ");
                     //console.log(epicID);
-                    if(plat != "pc" && plat != "xbox" && plat != "ps4"){
-                        epicID += (" " + plat); 
-                        plat = "pc";
+                    if(platLC != "pc" && platLC != "xbox" && platLC != "ps4"){
+                        if(args.length > 2){
+                            epicID += (" " + plat); 
+                        }
+                        else{
+                            epicID = args[1];
+                        }
+                        platLC = "pc";
                         //console.log("" + (args.length - 1));
                     }
-                    console.log("Searching for " + epicID + ", " + plat);
-                    statDelivery(epicID, plat, cmd, channelID);  
+                    //console.log("Searching for " + epicID + ", " + plat);
+                    statDelivery(epicID, platLC, cmd, channelID);  
                 }
             break;
             case "test":
-                console.log(args.length);
-                //var myRole = client.users.get(userID);
+                client.getUser({
+                    userID: userID
+                });
+                console.log(myRole);
                 //console.log(evt);
                 //client.getUser({"userID": userID}).
                 //console.log(client.guilds); //still not returning the objects I want z z z
@@ -92,9 +100,10 @@ client.on("message", function (user, userID, channelID, message, evt) {
 });
 
 function statDelivery(user, platform, mode, channelID){
+    console.log("Searching for " + user + ", " + platform);
     fortnite.user(user, platform).then((myUser) =>{
         //console.log("WE HERE: " + myUser.username);
-        var myMode
+        var myMode;
         switch(mode){
             case "solos":
                 myMode = myUser.stats.solo;
@@ -113,7 +122,6 @@ function statDelivery(user, platform, mode, channelID){
             });
         }
         else{
-            console.log(myMode.wins);
             client.sendMessage({
                 to: channelID,
                 message: "```Username: " + myUser.username + "\nMatches: " + myMode.matches + "\nWins: " + myMode.wins + "\nKills: " + myMode.kills + "```"
@@ -126,5 +134,4 @@ function statDelivery(user, platform, mode, channelID){
         });
         console.log(error);
     });
-    console.log("Mission complete.");
 }
