@@ -1,4 +1,4 @@
-var Discord = require("discord.io");
+var Discord = require("discord.js");
 var logger = require("winston");
 var conf = require(".././config.json");
 var FNClient = require('fortnite');
@@ -11,49 +11,41 @@ logger.add(new logger.transports.Console, {
 });
 logger.level = "debug";
 
-var client = new Discord.Client({
-   token: conf.token,
-   autorun: true
-});
-client.on("ready", function (evt) {
+var client = new Discord.Client();
+
+client.on("ready", () => {
     logger.info("Connected");
     logger.info("Logged in as: ");
-    logger.info(client.username + " - (" + client.id + ")");
     //console.log(evt);
 });
 
 
-client.on("message", function (user, userID, channelID, message, evt) {
+client.on("message", (message) => {
+
+    //console.log(message.content);
+    var channelID = message.channel.id;
+    var userID = message.author.id;
+    var user = message.author.username;
     
-    if (message.substring(0, 1) == conf.prefix) {
-        var args = message.substring(1).split(" ");
+    if (message.content.substring(0, 1) == conf.prefix) {
+        var args = message.content.substring(1).split(" ");
         var cmd = args[0];
        
         //args = args.splice(1);
         switch(cmd) {
             // !ping
             case "customs":
-                client.sendMessage({
-                    to: channelID,
-                    message: "Our next round of custom games are on Sunday 16th September at 8PM."
-                });
+                message.channel.send("Our next round of custom games are on Sunday 16th September at 8PM.");
             break;
             case "help":
-                client.sendMessage({
-                    to: channelID,
-                    message: "```-customs \t\t\t\t\t\tInformation on the Fortnite Ireland Community games.\n-solos <Username> <Platform>\t Get the solos stats for a user.\n-duos <Username> <Platform>\t  Get the duos stats for a user.\n-squads <Username> <Platform>\tGet the squads stats for a user.```"
-                })
-                console.log(args[1]);
+                message.channel.send("```-customs \t\t\t\t\t\tInformation on the Fortnite Ireland Community games.\n-solos <Username> <Platform>\t Get the solos stats for a user.\n-duos <Username> <Platform>\t  Get the duos stats for a user.\n-squads <Username> <Platform>\tGet the squads stats for a user.```");
             break;
             case "solos":
             case "duos":
             case "squads":
                 //console.log(args[2]);
                 if(typeof(args[1]) == "undefined"){
-                    client.sendMessage({
-                        to: channelID,
-                        message: "Please enter an Epic ID to get stats for!"
-                    });
+                    message.channel.send("Please enter an Epic ID to get stats for!");
                 }
                 /*else if(args[2] != "pc" && args[2] != "ps4" && args[2] != "xb1" && typeof(args[2]) != undefined){
                     client.sendMessage({
@@ -77,7 +69,7 @@ client.on("message", function (user, userID, channelID, message, evt) {
                         //console.log("" + (args.length - 1));
                     }
                     //console.log("Searching for " + epicID + ", " + plat);
-                    statDelivery(epicID, platLC, cmd, channelID);  
+                    statDelivery(epicID, platLC, cmd, message.channel);  
                 }
             break;
             case "test":
@@ -99,7 +91,9 @@ client.on("message", function (user, userID, channelID, message, evt) {
      }
 });
 
-function statDelivery(user, platform, mode, channelID){
+client.login(conf.token);
+
+function statDelivery(user, platform, mode, channel){
     console.log("Searching for " + user + ", " + platform);
     fortnite.user(user, platform).then((myUser) =>{
         //console.log("WE HERE: " + myUser.username);
@@ -116,22 +110,13 @@ function statDelivery(user, platform, mode, channelID){
             break;
         }
         if(typeof(myMode) === "undefined"){
-            client.sendMessage({
-                to: channelID,
-                message: "```User has no stats for this game mode!```"
-            });
+            channel.send("```User has no stats for this game mode!```");
         }
         else{
-            client.sendMessage({
-                to: channelID,
-                message: "```Username: " + myUser.username + "\nMatches: " + myMode.matches + "\nWins: " + myMode.wins + "\nKills: " + myMode.kills + "```"
-            });
+            channel.send("```Username: " + myUser.username + "\nMatches: " + myMode.matches + "\nWins: " + myMode.wins + "\nKills: " + myMode.kills + "```");
         }
     }).catch((error) => {
-        client.sendMessage({
-            to: channelID,
-            message: "```Error retrieving stats, please try again later.```"
-        });
+        channel.send("```Error retrieving stats, please try again later.```");
         console.log(error);
     });
 }
