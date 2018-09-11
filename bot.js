@@ -12,7 +12,7 @@ logger.add(new logger.transports.Console, {
 logger.level = "debug";
 
 var client = new Discord.Client({
-   token: conf.token,
+   token: conf.tokentest,
    autorun: true
 });
 client.on("ready", function (evt) {
@@ -48,7 +48,7 @@ client.on("message", function (user, userID, channelID, message, evt) {
             case "solos":
             case "duos":
             case "squads":
-                console.log(args[2]);
+                //console.log(args[2]);
                 if(typeof(args[1]) == "undefined"){
                     client.sendMessage({
                         to: channelID,
@@ -62,16 +62,24 @@ client.on("message", function (user, userID, channelID, message, evt) {
                     });
                 }*/
                 else{
-                    //var myUser;
-                    statDelivery(args[1], args[2], cmd, channelID);
-                    
+                    var plat = args[args.length - 1];
+                    var epicID = args.slice(1, args.length-1).join(" ");
+                    //console.log(epicID);
+                    if(plat != "pc" && plat != "xbox" && plat != "ps4"){
+                        epicID += (" " + plat); 
+                        plat = "pc";
+                        //console.log("" + (args.length - 1));
+                    }
+                    console.log("Searching for " + epicID + ", " + plat);
+                    statDelivery(epicID, plat, cmd, channelID);  
                 }
             break;
             case "test":
+                console.log(args.length);
                 //var myRole = client.users.get(userID);
-                console.log(evt);
+                //console.log(evt);
                 //client.getUser({"userID": userID}).
-                console.log(client.guilds); //still not returning the objects I want z z z
+                //console.log(client.guilds); //still not returning the objects I want z z z
             break;
             default:
                 client.sendMessage({
@@ -83,7 +91,7 @@ client.on("message", function (user, userID, channelID, message, evt) {
      }
 });
 
-function statDelivery(user, platform = "pc", mode, channelID){
+function statDelivery(user, platform, mode, channelID){
     fortnite.user(user, platform).then((myUser) =>{
         //console.log("WE HERE: " + myUser.username);
         var myMode
@@ -116,7 +124,7 @@ function statDelivery(user, platform = "pc", mode, channelID){
             to: channelID,
             message: "```Error retrieving stats, please try again later.```"
         });
-        console.log("Error: " + error);
+        console.log(error);
     });
     console.log("Mission complete.");
 }
