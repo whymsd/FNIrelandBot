@@ -65,8 +65,16 @@ client.on("message", (message) => {
                         else{
                             epicID = args[1];
                         }
-                        platLC = "pc";
-                        //console.log("" + (args.length - 1));
+                        var myUser = message.guild.members.get(userID);
+                        if(myUser.roles.find(ay => ay.name === "PS4")){
+                            platLC = "ps4";
+                        }
+                        else if(myUser.roles.find(ay => ay.name === "Xbox 1")){
+                            platLC = "xbox";
+                        }
+                        else{
+                            platLC = "pc";
+                        }
                     }
                     //console.log("Searching for " + epicID + ", " + plat);
                     statDelivery(epicID, platLC, cmd, message.channel);  
